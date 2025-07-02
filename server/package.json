@@ -1,0 +1,43 @@
+{
+  "name": "wifi-monitoring-backend",
+  "version": "1.0.0",
+  "description": "Backend API for WiFi Location Monitoring System",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "migrate": "node scripts/migrate.js",
+    "seed": "node scripts/seed.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "dotenv": "^16.3.1",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.6.5",
+    "sequelize": "^6.35.2",
+    "ping": "^0.4.4",
+    "nodemailer": "^6.9.8",
+    "node-cron": "^3.0.3",
+    "express-rate-limit": "^7.1.5",
+    "express-validator": "^7.0.1",
+    "morgan": "^1.10.0",
+    "compression": "^1.7.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "keywords": [
+    "wifi",
+    "monitoring",
+    "ping",
+    "nodejs",
+    "express",
+    "api"
+  ],
+  "author": "WiFi Monitoring System",
+  "license": "MIT"
+}
