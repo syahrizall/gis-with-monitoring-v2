@@ -212,6 +212,23 @@ class ApiService {
     });
     return this.handleResponse(response);
   }
+
+  // Public endpoints
+  async getPublicLocations(params?: { limit?: number; search?: string; status?: string }) {
+    const queryParams = new URLSearchParams();
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
+    if (params?.search) queryParams.append('search', params.search);
+    if (params?.status) queryParams.append('status', params.status);
+    const response = await fetch(`${API_BASE_URL}/public/locations?${queryParams}`);
+    const data = await response.json();
+    if (data.success) return data.data;
+    throw new Error(data.message || 'Failed to fetch public locations');
+  }
+
+  async getPublicLocation(id: string) {
+    const response = await fetch(`${API_BASE_URL}/public/locations/${id}`);
+    return this.handleResponse(response);
+  }
 }
 
 export const apiService = new ApiService();

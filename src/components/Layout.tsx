@@ -26,6 +26,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentPage, onPageCha
     { id: 'locations', label: 'WiFi Locations', icon: MapPin },
     { id: 'monitoring', label: 'Monitoring', icon: Activity },
     { id: 'alerts', label: 'Alerts', icon: Bell },
+    { id: 'public', label: 'Public WiFi', icon: MapPin },
   ];
 
   return (

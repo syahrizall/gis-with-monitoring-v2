@@ -15,6 +15,7 @@ import locationRoutes from './routes/locations.js';
 import monitoringRoutes from './routes/monitoring.js';
 import alertRoutes from './routes/alerts.js';
 import dashboardRoutes from './routes/dashboard.js';
+import publicRoutes from './routes/public.js';
 
 // Import scheduler
 import monitoringScheduler from './scheduler/monitoringScheduler.js';
@@ -78,6 +79,7 @@ app.use('/api/locations', locationRoutes);
 app.use('/api/monitoring', monitoringRoutes);
 app.use('/api/alerts', alertRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/public', publicRoutes);
 
 // Manual monitoring trigger (for testing)
 app.post('/api/monitoring/trigger', async (req, res) => {
