@@ -27,7 +27,7 @@ router.get('/locations', async (req, res) => {
       offset: parseInt(offset),
       order: [['created_at', 'DESC']],
       attributes: [
-        'id', 'nama', 'alamat', 'latitude', 'longitude', 'status', 'last_checked'
+        'id', 'nama', 'alamat', 'latitude', 'longitude', 'status', 'last_checked', 'ip_publik'
       ]
     });
 
@@ -58,7 +58,7 @@ router.get('/locations/:id', async (req, res) => {
     const location = await WiFiLocation.findOne({
       where: { id: req.params.id, is_active: true },
       attributes: [
-        'id', 'nama', 'alamat', 'latitude', 'longitude', 'status', 'last_checked'
+        'id', 'nama', 'alamat', 'latitude', 'longitude', 'status', 'last_checked', 'ip_publik'
       ]
     });
     if (!location) {
