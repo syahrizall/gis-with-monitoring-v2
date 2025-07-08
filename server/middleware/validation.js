@@ -26,10 +26,12 @@ export const validateLogin = [
 export const validateWiFiLocation = [
   body('nama')
     .trim()
+    .escape()
     .isLength({ min: 2, max: 255 })
     .withMessage('Name must be between 2 and 255 characters'),
   body('alamat')
     .trim()
+    .escape()
     .isLength({ min: 5 })
     .withMessage('Address must be at least 5 characters long'),
   body('latitude')

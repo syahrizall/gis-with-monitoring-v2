@@ -19,6 +19,7 @@ import publicRoutes from './routes/public.js';
 
 // Import scheduler
 import monitoringScheduler from './scheduler/monitoringScheduler.js';
+import emailService from './services/emailService.js';
 
 // Load environment variables
 dotenv.config();
@@ -96,6 +97,21 @@ app.post('/api/monitoring/trigger', async (req, res) => {
       message: 'Failed to trigger monitoring',
       error: error.message
     });
+  }
+});
+
+// Endpoint test email (debug)
+app.post('/api/test-email', async (req, res) => {
+  try {
+    await emailService.sendEmail(
+      process.env.ADMIN_EMAIL,
+      'Test Email WinFree',
+      '<b>Ini email test dari server WinFree</b>',
+      'Ini email test dari server WinFree'
+    );
+    res.json({ success: true, message: 'Test email sent!' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
