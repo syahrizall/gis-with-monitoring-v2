@@ -1,4 +1,18 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+// Detect if running on network access and use appropriate API URL
+const getApiBaseUrl = () => {
+  const hostname = window.location.hostname;
+  const port = '5005';
+  
+  // If accessing via IP address, use the same IP for API
+  if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
+    return `http://${hostname}:${port}/api`;
+  }
+  
+  // Default to localhost for local development
+  return `http://localhost:${port}/api`;
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 interface ApiResponse<T> {
   success: boolean;

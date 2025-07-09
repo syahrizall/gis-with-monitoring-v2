@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { WiFiLocation } from '../types';
+import { MapPin } from 'lucide-react'; // Added for the legend icon
 
 // Fix for default markers
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -82,7 +83,7 @@ export const WiFiMap: React.FC<WiFiMapProps> = ({ locations, onLocationClick }) 
               }">
                 ${location.status.toUpperCase()}
               </span>
-              <span class="text-xs text-gray-500">${location.ip_publik}</span>
+              <span class="text-xs text-gray-500">${location.ip_publik ? location.ip_publik : '-'}</span>
             </div>
             <p class="text-xs text-gray-500">
               Last checked: ${new Date(location.last_checked).toLocaleString()}
@@ -105,25 +106,24 @@ export const WiFiMap: React.FC<WiFiMapProps> = ({ locations, onLocationClick }) 
   }, [locations, onLocationClick]);
 
   return (
-    <div className="relative">
-      <div ref={mapRef} className="w-full h-96 rounded-xl border shadow-sm" />
-      
+    <div className="relative animate-fade-in">
+      {/* Decorative gradient background */}
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white via-teal-50 to-teal-100 z-0" />
+      <div ref={mapRef} className="w-full h-96 md:h-[32rem] rounded-xl border-2 border-teal-200 shadow-xl relative z-10" />
       {/* Legend */}
-      <div className="absolute top-4 right-4 bg-white p-3 rounded-lg shadow-lg border">
-        <h4 className="text-sm font-semibold text-gray-900 mb-2">WiFi Locations - Bandung</h4>
-        <div className="space-y-2">
+      <div className="absolute top-6 right-6 bg-white/90 p-4 rounded-lg shadow-lg border flex flex-col gap-2 animate-fade-in z-20 backdrop-blur-sm">
+        <h4 className="text-base font-semibold text-gray-900 mb-2 flex items-center gap-2"><MapPin className="w-5 h-5 text-teal-700" /> Legend</h4>
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+          <div className="w-3 h-3 bg-green-500 rounded-full border border-white" />
             <span className="text-sm text-gray-700">Online</span>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+          <div className="w-3 h-3 bg-red-500 rounded-full border border-white" />
             <span className="text-sm text-gray-700">Offline</span>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
+          <div className="w-3 h-3 bg-gray-500 rounded-full border border-white" />
             <span className="text-sm text-gray-700">Unknown</span>
-          </div>
         </div>
       </div>
     </div>

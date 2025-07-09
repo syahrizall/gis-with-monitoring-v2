@@ -53,8 +53,8 @@ FROM_EMAIL=your-email@gmail.com
 ADMIN_EMAIL=admin@example.com
 
 # Server
-PORT=5000
-FRONTEND_URL=http://localhost:5173
+PORT=5005
+FRONTEND_URL=http://localhost:5175
 ```
 
 ### 4. Migrasi Database

@@ -26,7 +26,6 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentPage, onPageCha
     { id: 'locations', label: 'WiFi Locations', icon: MapPin },
     { id: 'monitoring', label: 'Monitoring', icon: Activity },
     { id: 'alerts', label: 'Alerts', icon: Bell },
-    { id: 'public', label: 'Public WiFi', icon: MapPin },
   ];
 
   return (
@@ -35,8 +34,8 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentPage, onPageCha
       <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transition-transform duration-300 ease-in-out`}>
         <div className="flex items-center justify-between h-16 px-6 border-b">
           <div className="flex items-center space-x-3">
-            <Wifi className="w-8 h-8 text-blue-600" />
-            <span className="text-xl font-bold text-gray-900">WiFi Monitor</span>
+            <img src="/logo.png" alt="Logo WinFree" className="w-8 h-8 object-contain" />
+            <span className="text-xl font-bold text-gray-900">WinFree</span>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
@@ -56,8 +55,8 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentPage, onPageCha
                   onPageChange(item.id);
                   setSidebarOpen(false);
                 }}
-                className={`w-full flex items-center px-6 py-3 text-left hover:bg-blue-50 transition-colors ${
-                  currentPage === item.id ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : 'text-gray-700'
+                className={`w-full flex items-center px-6 py-3 text-left hover:bg-teal-50 transition-colors ${
+                  currentPage === item.id ? 'bg-teal-50 text-teal-700 border-r-2 border-teal-700' : 'text-gray-700'
                 }`}
               >
                 <Icon className="w-5 h-5 mr-3" />

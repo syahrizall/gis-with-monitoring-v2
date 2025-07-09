@@ -1,10 +1,13 @@
+// [1] IMPORTS
 import React, { useState, useEffect } from 'react';
 import { Activity, CheckCircle, XCircle, Clock, Search, Filter, RefreshCw } from 'lucide-react';
 import { useWiFiData } from '../hooks/useWiFiData';
 import { apiService } from '../services/api';
 import { MonitoringLog } from '../types';
 
+// [2] MONITORING PAGE COMPONENT
 export const MonitoringPage: React.FC = () => {
+  // State & hooks
   const { locations } = useWiFiData();
   const [logs, setLogs] = useState<MonitoringLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -12,21 +15,19 @@ export const MonitoringPage: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<'all' | 'online' | 'offline'>('all');
   const [locationFilter, setLocationFilter] = useState<string>('all');
 
+  // Fetch logs
   const fetchLogs = async () => {
     try {
       setIsLoading(true);
       const params: any = { limit: 100 };
-      
-      if (statusFilter !== 'all') {
-        params.status = statusFilter;
-      }
-      
-      if (locationFilter !== 'all') {
-        params.location_id = locationFilter;
-      }
-
+      if (statusFilter !== 'all') params.status = statusFilter;
+      if (locationFilter !== 'all') params.location_id = locationFilter;
       const response = await apiService.getMonitoringLogs(params);
-      setLogs(response.logs || []);
+      if (response && typeof response === 'object' && 'logs' in response && Array.isArray((response as any).logs)) {
+        setLogs((response as any).logs);
+      } else {
+        setLogs([]);
+      }
     } catch (error) {
       console.error('Failed to fetch monitoring logs:', error);
     } finally {
@@ -34,23 +35,16 @@ export const MonitoringPage: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    fetchLogs();
-  }, [statusFilter, locationFilter]);
+  useEffect(() => { fetchLogs(); }, [statusFilter, locationFilter]);
+  useEffect(() => { const interval = setInterval(fetchLogs, 30000); return () => clearInterval(interval); }, [statusFilter, locationFilter]);
 
-  // Auto-refresh every 30 seconds
-  useEffect(() => {
-    const interval = setInterval(fetchLogs, 30000);
-    return () => clearInterval(interval);
-  }, [statusFilter, locationFilter]);
-
+  // Filter logs by search
   const filteredLogs = logs.filter(log => {
-    const matchesSearch = 
-      log.location?.nama?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.ip_address.includes(searchTerm);
+    const matchesSearch = log.location?.nama?.toLowerCase().includes(searchTerm.toLowerCase()) || log.ip_address.includes(searchTerm);
     return matchesSearch;
   });
 
+  // [3] LOADING STATE
   if (isLoading) {
     return (
       <div className="p-6 space-y-6">
@@ -65,8 +59,10 @@ export const MonitoringPage: React.FC = () => {
     );
   }
 
+  // [4] MAIN RENDER
   return (
     <div className="p-6 space-y-6">
+      {/* Header & Refresh */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Monitoring Logs</h1>
@@ -74,7 +70,7 @@ export const MonitoringPage: React.FC = () => {
         </div>
         <button
           onClick={fetchLogs}
-          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center space-x-2 px-4 py-2 bg-teal-800 text-white rounded-lg hover:bg-teal-900 transition-colors"
         >
           <RefreshCw className="w-4 h-4" />
           <span>Refresh</span>
@@ -91,34 +87,30 @@ export const MonitoringPage: React.FC = () => {
               placeholder="Search by location or IP address..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-700 focus:border-transparent"
             />
           </div>
-          
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
               <Filter className="w-4 h-4 text-gray-400" />
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as 'all' | 'online' | 'offline')}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-700 focus:border-transparent"
               >
                 <option value="all">All Status</option>
                 <option value="online">Online</option>
                 <option value="offline">Offline</option>
               </select>
             </div>
-
             <select
               value={locationFilter}
               onChange={(e) => setLocationFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-700 focus:border-transparent"
             >
               <option value="all">All Locations</option>
               {locations.map(location => (
-                <option key={location.id} value={location.id}>
-                  {location.nama}
-                </option>
+                <option key={location.id} value={location.id}>{location.nama}</option>
               ))}
             </select>
           </div>
@@ -129,34 +121,21 @@ export const MonitoringPage: React.FC = () => {
       <div className="bg-white rounded-xl shadow-sm border">
         <div className="p-6 border-b">
           <div className="flex items-center space-x-2">
-            <Activity className="w-5 h-5 text-blue-600" />
+            <Activity className="w-5 h-5 text-teal-700" />
             <h2 className="text-lg font-semibold text-gray-900">Recent Monitoring Results</h2>
             <span className="text-sm text-gray-500">({filteredLogs.length} results)</span>
           </div>
         </div>
-
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Location
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  IP Address
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Response Time
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Error Message
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Timestamp
-                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP Address</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Response Time</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Error Message</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -164,9 +143,7 @@ export const MonitoringPage: React.FC = () => {
                 filteredLogs.map((log) => (
                   <tr key={log.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-gray-900">
-                        {log.location?.nama || 'Unknown Location'}
-                      </div>
+                      <div className="text-sm font-medium text-gray-900">{log.location?.nama || 'Unknown Location'}</div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm text-gray-900 font-mono">{log.ip_address}</div>
@@ -178,22 +155,14 @@ export const MonitoringPage: React.FC = () => {
                         ) : (
                           <XCircle className="w-4 h-4 text-red-600" />
                         )}
-                        <span className={`text-sm font-medium ${
-                          log.status === 'online' ? 'text-green-600' : 'text-red-600'
-                        }`}>
-                          {log.status.toUpperCase()}
-                        </span>
+                        <span className={`text-sm font-medium ${log.status === 'online' ? 'text-green-600' : 'text-red-600'}`}>{log.status.toUpperCase()}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900">
-                        {log.response_time ? `${log.response_time}ms` : 'N/A'}
-                      </div>
+                      <div className="text-sm text-gray-900">{log.response_time ? `${log.response_time}ms` : 'N/A'}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-gray-500 max-w-xs truncate">
-                        {log.error_message || '-'}
-                      </div>
+                      <div className="text-sm text-gray-500 max-w-xs truncate">{log.error_message || '-'}</div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-1 text-sm text-gray-500">
@@ -208,24 +177,16 @@ export const MonitoringPage: React.FC = () => {
                   <td colSpan={6} className="px-6 py-12 text-center">
                     <Activity className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">No monitoring data</h3>
-                    <p className="text-gray-500">
-                      {searchTerm || statusFilter !== 'all' || locationFilter !== 'all'
-                        ? 'No results match your filters' 
-                        : 'Monitoring data will appear here once locations are being monitored'
-                      }
-                    </p>
+                    <p className="text-gray-500">{searchTerm || statusFilter !== 'all' || locationFilter !== 'all' ? 'No results match your filters' : 'Monitoring data will appear here once locations are being monitored'}</p>
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
-
         {filteredLogs.length > 0 && (
           <div className="px-6 py-4 border-t bg-gray-50">
-            <p className="text-sm text-gray-700">
-              Showing {filteredLogs.length} of {logs.length} monitoring results
-            </p>
+            <p className="text-sm text-gray-700">Showing {filteredLogs.length} of {logs.length} monitoring results</p>
           </div>
         )}
       </div>

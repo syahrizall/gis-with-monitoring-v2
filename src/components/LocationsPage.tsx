@@ -1,3 +1,4 @@
+// [1] IMPORTS
 import React, { useState } from 'react';
 import { Plus, Edit, Trash2, MapPin, Globe, Zap, RefreshCw } from 'lucide-react';
 import { useWiFiData } from '../hooks/useWiFiData';
@@ -5,13 +6,16 @@ import { LocationForm } from './LocationForm';
 import { WiFiMap } from './WiFiMap';
 import { WiFiLocation } from '../types';
 
+// [2] LOCATIONS PAGE COMPONENT
 export const LocationsPage: React.FC = () => {
+  // State & hooks
   const { locations, addLocation, updateLocation, deleteLocation, pingLocation, isLoading } = useWiFiData();
   const [showForm, setShowForm] = useState(false);
   const [editingLocation, setEditingLocation] = useState<WiFiLocation | undefined>();
   const [showMap, setShowMap] = useState(true);
   const [pingLoading, setPingLoading] = useState<string | null>(null);
 
+  // Handler: Save
   const handleSaveLocation = async (locationData: Omit<WiFiLocation, 'id' | 'status' | 'last_checked' | 'created_at' | 'updated_at' | 'is_active'>) => {
     try {
       if (editingLocation) {
@@ -27,11 +31,13 @@ export const LocationsPage: React.FC = () => {
     }
   };
 
+  // Handler: Edit
   const handleEditLocation = (location: WiFiLocation) => {
     setEditingLocation(location);
     setShowForm(true);
   };
 
+  // Handler: Delete
   const handleDeleteLocation = async (location: WiFiLocation) => {
     if (confirm(`Are you sure you want to delete "${location.nama}"?`)) {
       try {
@@ -43,6 +49,7 @@ export const LocationsPage: React.FC = () => {
     }
   };
 
+  // Handler: Ping
   const handlePingLocation = async (location: WiFiLocation) => {
     setPingLoading(location.id);
     try {
@@ -55,10 +62,12 @@ export const LocationsPage: React.FC = () => {
     }
   };
 
+  // IP unik untuk validasi form
   const existingIPs = locations
     .filter(loc => loc.id !== editingLocation?.id)
     .map(loc => loc.ip_publik);
 
+  // [3] LOADING STATE
   if (isLoading) {
     return (
       <div className="p-6 space-y-6">
@@ -73,8 +82,10 @@ export const LocationsPage: React.FC = () => {
     );
   }
 
+  // [4] MAIN RENDER
   return (
     <div className="p-6 space-y-6">
+      {/* Header & Action */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">WiFi Locations</h1>
@@ -90,7 +101,7 @@ export const LocationsPage: React.FC = () => {
           </button>
           <button
             onClick={() => { setShowForm(true); setShowMap(false); }}
-            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center space-x-2 px-4 py-2 bg-teal-800 text-white rounded-lg hover:bg-teal-900 transition-colors"
           >
             <Plus className="w-4 h-4" />
             <span>Add Location</span>
@@ -98,6 +109,7 @@ export const LocationsPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Map Section */}
       {showMap && (
         <div className="bg-white rounded-xl shadow-sm border p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Interactive Map</h2>
@@ -105,33 +117,21 @@ export const LocationsPage: React.FC = () => {
         </div>
       )}
 
+      {/* Table Section */}
       <div className="bg-white rounded-xl shadow-sm border">
         <div className="p-6 border-b">
           <h2 className="text-lg font-semibold text-gray-900">All Locations ({locations.length})</h2>
         </div>
-        
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Location
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  IP Address
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Coordinates
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Last Checked
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP Address</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Coordinates</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Checked</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -144,15 +144,7 @@ export const LocationsPage: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      location.status === 'online' 
-                        ? 'bg-green-100 text-green-800' 
-                        : location.status === 'offline'
-                        ? 'bg-red-100 text-red-800'
-                        : 'bg-gray-100 text-gray-800'
-                    }`}>
-                      {location.status}
-                    </span>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${location.status === 'online' ? 'bg-green-100 text-green-800' : location.status === 'offline' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}`}>{location.status}</span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900 font-mono">
                     <div className="flex items-center space-x-2">
@@ -182,7 +174,7 @@ export const LocationsPage: React.FC = () => {
                       </button>
                       <button
                         onClick={() => handleEditLocation(location)}
-                        className="text-blue-600 hover:text-blue-900 transition-colors"
+                        className="text-teal-700 hover:text-teal-900 transition-colors"
                         title="Edit location"
                       >
                         <Edit className="w-4 h-4" />
@@ -201,7 +193,6 @@ export const LocationsPage: React.FC = () => {
             </tbody>
           </table>
         </div>
-
         {locations.length === 0 && (
           <div className="p-12 text-center">
             <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -209,7 +200,7 @@ export const LocationsPage: React.FC = () => {
             <p className="text-gray-500 mb-4">Start by adding your first WiFi location to monitor.</p>
             <button
               onClick={() => setShowForm(true)}
-              className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center space-x-2 px-4 py-2 bg-teal-800 text-white rounded-lg hover:bg-teal-900 transition-colors"
             >
               <Plus className="w-4 h-4" />
               <span>Add Location</span>
@@ -217,7 +208,7 @@ export const LocationsPage: React.FC = () => {
           </div>
         )}
       </div>
-
+      {/* Form Section */}
       {showForm && (
         <LocationForm
           location={editingLocation}

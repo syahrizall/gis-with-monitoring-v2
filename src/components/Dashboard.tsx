@@ -1,19 +1,14 @@
+// [1] IMPORTS
 import React from 'react';
-import { 
-  Wifi, 
-  CheckCircle, 
-  XCircle, 
-  Activity, 
-  Clock,
-  AlertTriangle,
-  RefreshCw
-} from 'lucide-react';
+import { Wifi, CheckCircle, XCircle, Activity, Clock, AlertTriangle, RefreshCw } from 'lucide-react';
 import { useWiFiData } from '../hooks/useWiFiData';
 
+// [2] DASHBOARD COMPONENT
 export const Dashboard: React.FC = () => {
   const { dashboardData, triggerMonitoring, getStats, isLoading } = useWiFiData();
   const stats = getStats();
 
+  // Manual refresh handler
   const handleManualRefresh = async () => {
     try {
       await triggerMonitoring();
@@ -22,6 +17,7 @@ export const Dashboard: React.FC = () => {
     }
   };
 
+  // Stat Card
   const StatCard: React.FC<{
     title: string;
     value: number;
@@ -34,13 +30,12 @@ export const Dashboard: React.FC = () => {
           <p className="text-sm font-medium text-gray-600">{title}</p>
           <p className="text-3xl font-bold text-gray-900 mt-2">{value}</p>
         </div>
-        <div className={`p-3 rounded-lg ${color}`}>
-          {icon}
-        </div>
+        <div className={`p-3 rounded-lg ${color}`}>{icon}</div>
       </div>
     </div>
   );
 
+  // [3] LOADING STATE
   if (isLoading) {
     return (
       <div className="p-6 space-y-6">
@@ -60,8 +55,10 @@ export const Dashboard: React.FC = () => {
     );
   }
 
+  // [4] MAIN RENDER
   return (
     <div className="p-6 space-y-6">
+      {/* Header & Manual Refresh */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
@@ -69,7 +66,7 @@ export const Dashboard: React.FC = () => {
         </div>
         <button
           onClick={handleManualRefresh}
-          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center space-x-2 px-4 py-2 bg-teal-800 text-white rounded-lg hover:bg-teal-900 transition-colors"
         >
           <RefreshCw className="w-4 h-4" />
           <span>Manual Check</span>
@@ -81,8 +78,8 @@ export const Dashboard: React.FC = () => {
         <StatCard
           title="Total WiFi Locations"
           value={stats.total}
-          icon={<Wifi className="w-6 h-6 text-blue-600" />}
-          color="bg-blue-100"
+          icon={<Wifi className="w-6 h-6 text-teal-700" />}
+          color="bg-teal-100"
         />
         <StatCard
           title="Online Locations"
@@ -104,12 +101,13 @@ export const Dashboard: React.FC = () => {
         />
       </div>
 
+      {/* Recent Monitoring Logs & Alerts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Monitoring Logs */}
         <div className="bg-white rounded-xl shadow-sm border">
           <div className="p-6 border-b">
             <div className="flex items-center space-x-2">
-              <Activity className="w-5 h-5 text-blue-600" />
+              <Activity className="w-5 h-5 text-teal-700" />
               <h2 className="text-lg font-semibold text-gray-900">Recent Monitoring</h2>
             </div>
           </div>
@@ -130,9 +128,7 @@ export const Dashboard: React.FC = () => {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className={`text-sm font-medium ${log.status === 'online' ? 'text-green-600' : 'text-red-600'}`}>
-                        {log.status.toUpperCase()}
-                      </p>
+                      <p className={`text-sm font-medium ${log.status === 'online' ? 'text-green-600' : 'text-red-600'}`}>{log.status.toUpperCase()}</p>
                       <div className="flex items-center text-xs text-gray-500">
                         <Clock className="w-3 h-3 mr-1" />
                         <span>{new Date(log.checked_at).toLocaleTimeString()}</span>
@@ -149,7 +145,6 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
-
         {/* Recent Alerts */}
         <div className="bg-white rounded-xl shadow-sm border">
           <div className="p-6 border-b">
@@ -163,15 +158,7 @@ export const Dashboard: React.FC = () => {
               {dashboardData?.recent_alerts && dashboardData.recent_alerts.length > 0 ? (
                 dashboardData.recent_alerts.map((alert) => (
                   <div key={alert.id} className="flex items-start space-x-3 py-3 border-b last:border-b-0">
-                    <div className={`p-1 rounded-full ${
-                      alert.type === 'connection_restored' ? 'bg-green-100' : 'bg-red-100'
-                    }`}>
-                      {alert.type === 'connection_restored' ? (
-                        <CheckCircle className="w-4 h-4 text-green-600" />
-                      ) : (
-                        <XCircle className="w-4 h-4 text-red-600" />
-                      )}
-                    </div>
+                    <div className={`p-1 rounded-full ${alert.type === 'connection_restored' ? 'bg-green-100' : 'bg-red-100'}`}>{alert.type === 'connection_restored' ? (<CheckCircle className="w-4 h-4 text-green-600" />) : (<XCircle className="w-4 h-4 text-red-600" />)}</div>
                     <div className="flex-1">
                       <p className="text-sm text-gray-900">{alert.message}</p>
                       <div className="flex items-center justify-between mt-1">
@@ -179,9 +166,7 @@ export const Dashboard: React.FC = () => {
                           <Clock className="w-3 h-3 mr-1" />
                           {new Date(alert.created_at).toLocaleString()}
                         </p>
-                        {!alert.is_read && (
-                          <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
-                        )}
+                        {!alert.is_read && (<span className="w-2 h-2 bg-teal-700 rounded-full"></span>)}
                       </div>
                     </div>
                   </div>
@@ -200,7 +185,7 @@ export const Dashboard: React.FC = () => {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">24 Hour Statistics</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center">
-              <p className="text-2xl font-bold text-blue-600">{dashboardData.statistics.monitoring_activity_24h}</p>
+              <p className="text-2xl font-bold text-teal-700">{dashboardData.statistics.monitoring_activity_24h}</p>
               <p className="text-sm text-gray-600">Monitoring Checks</p>
             </div>
             <div className="text-center">

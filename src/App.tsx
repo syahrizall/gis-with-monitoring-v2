@@ -13,8 +13,8 @@ import { useAuth } from './hooks/useAuth';
 // Halaman info publik (sementara statis)
 const AboutPage = () => (
   <div className="p-8 max-w-2xl mx-auto">
-    <h1 className="text-2xl font-bold mb-4">Tentang WiFi Publik</h1>
-    <p className="text-gray-700">Aplikasi ini menampilkan lokasi WiFi publik yang dapat diakses masyarakat secara gratis.</p>
+    <h1 className="text-2xl font-bold mb-4">Tentang WinFree</h1>
+    <p className="text-gray-700">Aplikasi ini menampilkan lokasi WinFree yang dapat diakses masyarakat secara gratis.</p>
   </div>
 );
 const GuidePage = () => (
@@ -23,7 +23,7 @@ const GuidePage = () => (
     <ul className="list-disc pl-6 text-gray-700">
       <li>Cari lokasi WiFi terdekat di peta atau daftar.</li>
       <li>Klik marker atau nama lokasi untuk detail.</li>
-      <li>Ikuti petunjuk keamanan saat menggunakan WiFi publik.</li>
+      <li>Ikuti petunjuk keamanan saat menggunakan WinFree.</li>
     </ul>
   </div>
 );
